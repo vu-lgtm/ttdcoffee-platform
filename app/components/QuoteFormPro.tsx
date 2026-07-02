@@ -18,92 +18,62 @@ export default function QuoteFormPro() {
     register,
     handleSubmit,
     reset,
+    formState: { isSubmitting },
   } = useForm<FormData>();
 
-  const onSubmit = (data: FormData) => {
-    console.log(data);
-    alert("Yêu cầu báo giá đã được ghi nhận!");
+  const onSubmit = async (data: FormData) => {
+    const response = await fetch("/api/leads", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    const result = await response.json();
+
+    if (!result.success) {
+      alert("❌ Gửi thất bại");
+      console.error(result);
+      return;
+    }
+
+    alert("✅ Đã gửi báo giá thành công!");
     reset();
   };
 
   return (
-    <section className="section">
-      <div className="container">
+    <form onSubmit={handleSubmit(onSubmit)} className="quote-form">
+      <input
+        placeholder="Họ và tên"
+        {...register("name", { required: true })}
+      />
 
-        <div className="section-head">
-          <div>
-            <p className="eyebrow">
-              AI Quote
-            </p>
+      <input placeholder="Công ty" {...register("company")} />
 
-            <h2>
-              Yêu cầu báo giá
-            </h2>
+      <input
+        placeholder="Email"
+        type="email"
+        {...register("email", { required: true })}
+      />
 
-            <p>
-              Điền thông tin để TTD Coffee liên hệ trong thời gian sớm nhất.
-            </p>
+      <input placeholder="WhatsApp / Phone" {...register("phone")} />
 
-          </div>
-        </div>
+      <input placeholder="Quốc gia" {...register("country")} />
 
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="card"
-          style={{
-            display:"grid",
-            gap:20
-          }}
-        >
+      <input placeholder="Sản phẩm" {...register("product")} />
 
-          <input
-            placeholder="Họ và tên"
-            {...register("name")}
-          />
+      <input placeholder="Số lượng" {...register("quantity")} />
 
-          <input
-            placeholder="Công ty"
-            {...register("company")}
-          />
+      <textarea
+        placeholder="Mô tả yêu cầu"
+        rows={5}
+        {...register("message")}
+      />
 
-          <input
-            placeholder="Email"
-            {...register("email")}
-          />
-
-          <input
-            placeholder="WhatsApp / Phone"
-            {...register("phone")}
-          />
-
-          <input
-            placeholder="Quốc gia"
-            {...register("country")}
-          />
-
-          <input
-            placeholder="Sản phẩm"
-            {...register("product")}
-          />
-
-          <input
-            placeholder="Số lượng"
-            {...register("quantity")}
-          />
-
-          <textarea
-            rows={5}
-            placeholder="Mô tả yêu cầu"
-            {...register("message")}
-          />
-
-          <button className="btn">
-            Gửi báo giá
-          </button>
-
-        </form>
-
-      </div>
-    </section>
+      <button type="submit" disabled={isSubmitting}>
+        {isSubmitting ? "Đang gửi..." : "Gửi báo giá"}
+      </button>
+    </form>
   );
 }
