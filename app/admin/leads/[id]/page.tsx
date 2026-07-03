@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { LogoutButton } from "../../LogoutButton";
+import { getCustomerByLeadId } from "../../customers/customer";
+import { ConvertToCustomerButton } from "../ConvertToCustomerButton";
 import { LeadStatusSelect } from "../LeadStatusSelect";
 import { getLeadById, statusColors } from "../lead";
 
@@ -24,6 +26,8 @@ export default async function LeadDetailPage({
   if (!lead) {
     notFound();
   }
+
+  const customer = await getCustomerByLeadId(lead.id);
 
   return (
     <main
@@ -83,6 +87,19 @@ export default async function LeadDetailPage({
             }}
           />
           <LeadStatusSelect id={lead.id} status={lead.status} />
+
+          <div style={{ marginLeft: "auto" }}>
+            {customer ? (
+              <Link
+                href={`/admin/customers/${customer.id}`}
+                style={{ color: "#2B6CB0", fontWeight: 600 }}
+              >
+                ✓ Đã là khách hàng →
+              </Link>
+            ) : (
+              <ConvertToCustomerButton lead={lead} />
+            )}
+          </div>
         </div>
 
         <div
