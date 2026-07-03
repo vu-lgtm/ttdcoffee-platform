@@ -52,7 +52,28 @@ export default async function CustomerDetailPage({
         <LogoutButton />
       </div>
 
-      <h1 style={{ fontSize: 42, marginTop: 15 }}>{customer.name}</h1>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <h1 style={{ fontSize: 42, marginTop: 15 }}>{customer.name}</h1>
+        <Link
+          href={`/admin/customers/${customer.id}/edit`}
+          style={{
+            border: "1px solid #ddd",
+            borderRadius: 999,
+            padding: "9px 16px",
+            fontWeight: 600,
+            color: "#222",
+            textDecoration: "none",
+          }}
+        >
+          Sửa
+        </Link>
+      </div>
 
       <p style={{ marginBottom: 30, color: "#666" }}>
         Khách hàng từ {new Date(customer.created_at).toLocaleDateString("vi-VN")}

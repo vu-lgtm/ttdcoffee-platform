@@ -3,8 +3,15 @@ import { LogoutButton } from "../LogoutButton";
 import { LeadStatusSelect } from "./LeadStatusSelect";
 import { getLeads, statusColors } from "./lead";
 
-export default async function LeadsPage() {
-  const leads = await getLeads();
+const statusOptions = ["new", "contacted", "quoted", "won", "lost"];
+
+export default async function LeadsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string; status?: string }>;
+}) {
+  const { q, status } = await searchParams;
+  const leads = await getLeads({ q, status });
 
   return (
     <main
@@ -32,7 +39,72 @@ export default async function LeadsPage() {
 
       <h1 style={{ fontSize: 42, marginTop: 15 }}>☕ Leads</h1>
 
-      <p style={{ marginBottom: 40 }}>Quản lý lead từ website</p>
+      <p style={{ marginBottom: 24 }}>Quản lý lead từ website</p>
+
+      <form
+        method="get"
+        style={{ display: "flex", gap: 12, marginBottom: 24 }}
+      >
+        <input
+          name="q"
+          defaultValue={q ?? ""}
+          placeholder="Tìm theo tên, công ty, email..."
+          style={{
+            flex: 1,
+            padding: 12,
+            borderRadius: 8,
+            border: "1px solid #ddd",
+            font: "inherit",
+          }}
+        />
+
+        <select
+          name="status"
+          defaultValue={status ?? ""}
+          style={{
+            padding: 12,
+            borderRadius: 8,
+            border: "1px solid #ddd",
+            font: "inherit",
+          }}
+        >
+          <option value="">Tất cả trạng thái</option>
+          {statusOptions.map((s) => (
+            <option key={s} value={s}>
+              {s}
+            </option>
+          ))}
+        </select>
+
+        <button
+          type="submit"
+          style={{
+            border: "none",
+            borderRadius: 999,
+            background: "#2F855A",
+            color: "white",
+            padding: "12px 22px",
+            fontWeight: 600,
+            cursor: "pointer",
+          }}
+        >
+          Lọc
+        </button>
+
+        {(q || status) && (
+          <Link
+            href="/admin/leads"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              color: "#6B46C1",
+              textDecoration: "none",
+            }}
+          >
+            Xóa lọc
+          </Link>
+        )}
+      </form>
 
       <div
         style={{

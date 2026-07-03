@@ -2,6 +2,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCustomerById } from "../../customers/customer";
 import { LogoutButton } from "../../LogoutButton";
+import { DeleteQuoteButton } from "../DeleteQuoteButton";
+import { QuoteStatusSelect } from "../QuoteStatusSelect";
 import { getQuoteById, statusColors } from "../quote";
 
 export default async function QuoteDetailPage({
@@ -86,25 +88,44 @@ export default async function QuoteDetailPage({
               background: statusColors[quote.status] ?? "#999",
             }}
           />
-          {quote.status}
+          <QuoteStatusSelect id={quote.id} status={quote.status} />
 
-          <a
-            href={`/api/quotes/${quote.id}/pdf`}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              marginLeft: "auto",
-              border: "none",
-              borderRadius: 999,
-              background: "#B7791F",
-              color: "white",
-              padding: "10px 18px",
-              fontWeight: 600,
-              textDecoration: "none",
-            }}
-          >
-            📄 Xem / Tải PDF
-          </a>
+          <div style={{ marginLeft: "auto", display: "flex", gap: 10 }}>
+            <Link
+              href={`/admin/quotes/${quote.id}/edit`}
+              style={{
+                border: "1px solid #ddd",
+                borderRadius: 999,
+                padding: "9px 16px",
+                fontWeight: 600,
+                color: "#222",
+                textDecoration: "none",
+              }}
+            >
+              Sửa
+            </Link>
+
+            <a
+              href={`/api/quotes/${quote.id}/pdf`}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                border: "none",
+                borderRadius: 999,
+                background: "#B7791F",
+                color: "white",
+                padding: "10px 18px",
+                fontWeight: 600,
+                textDecoration: "none",
+              }}
+            >
+              📄 Xem / Tải PDF
+            </a>
+
+            {customer && (
+              <DeleteQuoteButton id={quote.id} customerId={customer.id} />
+            )}
+          </div>
         </div>
 
         <div

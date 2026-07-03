@@ -22,11 +22,28 @@ export const statusColors: Record<string, string> = {
   lost: "#C53030",
 };
 
-export async function getLeads(): Promise<Lead[]> {
-  const { data, error } = await supabaseServer
+export async function getLeads(filters?: {
+  q?: string;
+  status?: string;
+}): Promise<Lead[]> {
+  let query = supabaseServer
     .from("leads")
     .select("*")
     .order("created_at", { ascending: false });
+
+  if (filters?.status) {
+    query = query.eq("status", filters.status);
+  }
+
+  const term = filters?.q?.replace(/[,()%]/g, "").trim();
+  if (term) {
+    const pattern = `%${term}%`;
+    query = query.or(
+      `name.ilike.${pattern},company.ilike.${pattern},email.ilike.${pattern}`
+    );
+  }
+
+  const { data, error } = await query;
 
   if (error) {
     throw new Error(error.message);
