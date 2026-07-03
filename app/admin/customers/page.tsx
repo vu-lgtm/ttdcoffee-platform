@@ -2,8 +2,13 @@ import Link from "next/link";
 import { LogoutButton } from "../LogoutButton";
 import { getCustomers } from "./customer";
 
-export default async function CustomersPage() {
-  const customers = await getCustomers();
+export default async function CustomersPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string }>;
+}) {
+  const { q } = await searchParams;
+  const customers = await getCustomers({ q });
 
   return (
     <main
@@ -31,7 +36,54 @@ export default async function CustomersPage() {
 
       <h1 style={{ fontSize: 42, marginTop: 15 }}>☕ Customers</h1>
 
-      <p style={{ marginBottom: 40 }}>Khách hàng đã chốt đơn</p>
+      <p style={{ marginBottom: 24 }}>Khách hàng đã chốt đơn</p>
+
+      <form
+        method="get"
+        style={{ display: "flex", gap: 12, marginBottom: 24 }}
+      >
+        <input
+          name="q"
+          defaultValue={q ?? ""}
+          placeholder="Tìm theo tên, công ty, email..."
+          style={{
+            flex: 1,
+            padding: 12,
+            borderRadius: 8,
+            border: "1px solid #ddd",
+            font: "inherit",
+          }}
+        />
+
+        <button
+          type="submit"
+          style={{
+            border: "none",
+            borderRadius: 999,
+            background: "#2B6CB0",
+            color: "white",
+            padding: "12px 22px",
+            fontWeight: 600,
+            cursor: "pointer",
+          }}
+        >
+          Lọc
+        </button>
+
+        {q && (
+          <Link
+            href="/admin/customers"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              color: "#6B46C1",
+              textDecoration: "none",
+            }}
+          >
+            Xóa lọc
+          </Link>
+        )}
+      </form>
 
       <div
         style={{

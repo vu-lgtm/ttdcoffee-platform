@@ -2,8 +2,15 @@ import Link from "next/link";
 import { LogoutButton } from "../LogoutButton";
 import { getQuotes, statusColors } from "./quote";
 
-export default async function QuotesPage() {
-  const quotes = await getQuotes();
+const statusOptions = ["draft", "sent", "accepted", "rejected"];
+
+export default async function QuotesPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ status?: string }>;
+}) {
+  const { status } = await searchParams;
+  const quotes = await getQuotes({ status });
 
   return (
     <main
@@ -31,7 +38,59 @@ export default async function QuotesPage() {
 
       <h1 style={{ fontSize: 42, marginTop: 15 }}>☕ Quotes</h1>
 
-      <p style={{ marginBottom: 40 }}>Báo giá đã tạo</p>
+      <p style={{ marginBottom: 24 }}>Báo giá đã tạo</p>
+
+      <form
+        method="get"
+        style={{ display: "flex", gap: 12, marginBottom: 24 }}
+      >
+        <select
+          name="status"
+          defaultValue={status ?? ""}
+          style={{
+            padding: 12,
+            borderRadius: 8,
+            border: "1px solid #ddd",
+            font: "inherit",
+          }}
+        >
+          <option value="">Tất cả trạng thái</option>
+          {statusOptions.map((s) => (
+            <option key={s} value={s}>
+              {s}
+            </option>
+          ))}
+        </select>
+
+        <button
+          type="submit"
+          style={{
+            border: "none",
+            borderRadius: 999,
+            background: "#B7791F",
+            color: "white",
+            padding: "12px 22px",
+            fontWeight: 600,
+            cursor: "pointer",
+          }}
+        >
+          Lọc
+        </button>
+
+        {status && (
+          <Link
+            href="/admin/quotes"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              color: "#6B46C1",
+              textDecoration: "none",
+            }}
+          >
+            Xóa lọc
+          </Link>
+        )}
+      </form>
 
       <div
         style={{

@@ -21,11 +21,19 @@ export const statusColors: Record<string, string> = {
   rejected: "#C53030",
 };
 
-export async function getQuotes(): Promise<Quote[]> {
-  const { data, error } = await supabaseServer
+export async function getQuotes(filters?: {
+  status?: string;
+}): Promise<Quote[]> {
+  let query = supabaseServer
     .from("quotes")
     .select("*")
     .order("created_at", { ascending: false });
+
+  if (filters?.status) {
+    query = query.eq("status", filters.status);
+  }
+
+  const { data, error } = await query;
 
   if (error) {
     throw new Error(error.message);

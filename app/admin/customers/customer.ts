@@ -12,11 +12,23 @@ export type Customer = {
   notes: string | null;
 };
 
-export async function getCustomers(): Promise<Customer[]> {
-  const { data, error } = await supabaseServer
+export async function getCustomers(filters?: {
+  q?: string;
+}): Promise<Customer[]> {
+  let query = supabaseServer
     .from("customers")
     .select("*")
     .order("created_at", { ascending: false });
+
+  const term = filters?.q?.replace(/[,()%]/g, "").trim();
+  if (term) {
+    const pattern = `%${term}%`;
+    query = query.or(
+      `name.ilike.${pattern},company.ilike.${pattern},email.ilike.${pattern}`
+    );
+  }
+
+  const { data, error } = await query;
 
   if (error) {
     throw new Error(error.message);
