@@ -43,37 +43,51 @@ export default function QuoteFormPro() {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="quote-form">
-      <input
-        placeholder="Họ và tên"
-        {...register("name", { required: true })}
-      />
+    <section className="section">
+      <div className="container">
+        <div className="quote-box">
+          <p className="eyebrow" style={{ color: "#C9A227" }}>
+            AI Quote
+          </p>
 
-      <input placeholder="Công ty" {...register("company")} />
+          <h2>Gửi yêu cầu báo giá</h2>
 
-      <input
-        placeholder="Email"
-        type="email"
-        {...register("email", { required: true })}
-      />
+          <p>
+            Điền thông tin để TTD Coffee tư vấn sản phẩm, số lượng, đóng gói,
+            OEM hoặc xuất khẩu.
+          </p>
 
-      <input placeholder="WhatsApp / Phone" {...register("phone")} />
+          <form onSubmit={handleSubmit(onSubmit)} className="form">
+            <input placeholder="Họ và tên" {...register("name", { required: true })} />
 
-      <input placeholder="Quốc gia" {...register("country")} />
+            <input placeholder="Công ty" {...register("company")} />
 
-      <input placeholder="Sản phẩm" {...register("product")} />
+            <input
+              placeholder="Email"
+              type="email"
+              {...register("email", { required: true })}
+            />
 
-      <input placeholder="Số lượng" {...register("quantity")} />
+            <input placeholder="WhatsApp / Phone" {...register("phone")} />
 
-      <textarea
-        placeholder="Mô tả yêu cầu"
-        rows={5}
-        {...register("message")}
-      />
+            <input placeholder="Quốc gia" {...register("country")} />
 
-      <button type="submit" disabled={isSubmitting}>
-        {isSubmitting ? "Đang gửi..." : "Gửi báo giá"}
-      </button>
-    </form>
+            <input placeholder="Sản phẩm" {...register("product")} />
+
+            <input placeholder="Số lượng" {...register("quantity")} />
+
+            <textarea
+              placeholder="Mô tả yêu cầu"
+              rows={5}
+              {...register("message")}
+            />
+
+            <button type="submit" className="btn" disabled={isSubmitting}>
+              {isSubmitting ? "Đang gửi..." : "Gửi báo giá"}
+            </button>
+          </form>
+        </div>
+      </div>
+    </section>
   );
 }

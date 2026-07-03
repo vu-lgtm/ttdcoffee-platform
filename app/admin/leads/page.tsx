@@ -1,3 +1,5 @@
+import Link from "next/link";
+import { supabaseServer } from "../../lib/supabase-server";
 import { LeadStatusSelect } from "./LeadStatusSelect";
 
 type Lead = {
@@ -14,59 +16,111 @@ type Lead = {
   status: string;
 };
 
-async function getLeads() {
-  const res = await fetch("http://localhost:3000/api/leads", {
-    cache: "no-store",
-  });
+async function getLeads(): Promise<Lead[]> {
+  const { data, error } = await supabaseServer
+    .from("leads")
+    .select("*")
+    .order("created_at", { ascending: false });
 
-  const data = await res.json();
+  if (error) {
+    throw new Error(error.message);
+  }
 
-  return data.leads || [];
+  return data ?? [];
 }
 
+const statusColors: Record<string, string> = {
+  new: "#2B6CB0",
+  contacted: "#B7791F",
+  quoted: "#6B46C1",
+  won: "#2F855A",
+  lost: "#C53030",
+};
+
 export default async function LeadsPage() {
-  const leads: Lead[] = await getLeads();
+  const leads = await getLeads();
 
   return (
-    <main style={{ padding: 40, fontFamily: "Arial, sans-serif" }}>
-      <h1>☕ TTD Coffee CRM</h1>
-      <p>Quản lý lead từ website</p>
+    <main
+      style={{
+        padding: 50,
+        background: "#f7f5ef",
+        minHeight: "100vh",
+      }}
+    >
+      <Link
+        href="/admin"
+        style={{ color: "#6B46C1", textDecoration: "none" }}
+      >
+        ← Dashboard
+      </Link>
 
-      <table style={{ width: "100%", borderCollapse: "collapse", marginTop: 24 }}>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Ngày</th>
-            <th>Tên</th>
-            <th>Công ty</th>
-            <th>Email</th>
-            <th>Điện thoại</th>
-            <th>Quốc gia</th>
-            <th>Sản phẩm</th>
-            <th>Số lượng</th>
-            <th>Trạng thái</th>
-          </tr>
-        </thead>
+      <h1 style={{ fontSize: 42, marginTop: 15 }}>☕ Leads</h1>
 
-        <tbody>
-          {leads.map((lead) => (
-            <tr key={lead.id}>
-              <td>{lead.id}</td>
-              <td>{new Date(lead.created_at).toLocaleDateString("vi-VN")}</td>
-              <td>{lead.name}</td>
-              <td>{lead.company}</td>
-              <td>{lead.email}</td>
-              <td>{lead.phone}</td>
-              <td>{lead.country}</td>
-              <td>{lead.product}</td>
-              <td>{lead.quantity}</td>
-              <td>
-                <LeadStatusSelect id={lead.id} status={lead.status} />
-              </td>
+      <p style={{ marginBottom: 40 }}>Quản lý lead từ website</p>
+
+      <div
+        style={{
+          background: "white",
+          borderRadius: 18,
+          boxShadow: "0 5px 18px rgba(0,0,0,.08)",
+          overflow: "hidden",
+        }}
+      >
+        <table style={{ width: "100%", borderCollapse: "collapse" }}>
+          <thead>
+            <tr style={{ background: "#f0ede4", textAlign: "left" }}>
+              <th style={{ padding: 14 }}>Ngày</th>
+              <th style={{ padding: 14 }}>Tên</th>
+              <th style={{ padding: 14 }}>Công ty</th>
+              <th style={{ padding: 14 }}>Email</th>
+              <th style={{ padding: 14 }}>Điện thoại</th>
+              <th style={{ padding: 14 }}>Quốc gia</th>
+              <th style={{ padding: 14 }}>Sản phẩm</th>
+              <th style={{ padding: 14 }}>Số lượng</th>
+              <th style={{ padding: 14 }}>Trạng thái</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+
+          <tbody>
+            {leads.length === 0 && (
+              <tr>
+                <td colSpan={9} style={{ padding: 24, textAlign: "center" }}>
+                  Chưa có lead nào.
+                </td>
+              </tr>
+            )}
+
+            {leads.map((lead) => (
+              <tr key={lead.id} style={{ borderTop: "1px solid #eee" }}>
+                <td style={{ padding: 14 }}>
+                  {new Date(lead.created_at).toLocaleDateString("vi-VN")}
+                </td>
+                <td style={{ padding: 14 }}>{lead.name}</td>
+                <td style={{ padding: 14 }}>{lead.company}</td>
+                <td style={{ padding: 14 }}>{lead.email}</td>
+                <td style={{ padding: 14 }}>{lead.phone}</td>
+                <td style={{ padding: 14 }}>{lead.country}</td>
+                <td style={{ padding: 14 }}>{lead.product}</td>
+                <td style={{ padding: 14 }}>{lead.quantity}</td>
+                <td style={{ padding: 14 }}>
+                  <span
+                    style={{
+                      display: "inline-block",
+                      width: 10,
+                      height: 10,
+                      borderRadius: 999,
+                      background: statusColors[lead.status] ?? "#999",
+                      marginRight: 8,
+                    }}
+                  />
+                  <LeadStatusSelect id={lead.id} status={lead.status} />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </main>
   );
 }
