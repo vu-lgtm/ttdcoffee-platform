@@ -1,42 +1,7 @@
 import Link from "next/link";
-import { supabaseServer } from "../../lib/supabase-server";
 import { LogoutButton } from "../LogoutButton";
 import { LeadStatusSelect } from "./LeadStatusSelect";
-
-type Lead = {
-  id: number;
-  created_at: string;
-  name: string;
-  company: string;
-  email: string;
-  phone: string;
-  country: string;
-  product: string;
-  quantity: string;
-  message: string;
-  status: string;
-};
-
-async function getLeads(): Promise<Lead[]> {
-  const { data, error } = await supabaseServer
-    .from("leads")
-    .select("*")
-    .order("created_at", { ascending: false });
-
-  if (error) {
-    throw new Error(error.message);
-  }
-
-  return data ?? [];
-}
-
-const statusColors: Record<string, string> = {
-  new: "#2B6CB0",
-  contacted: "#B7791F",
-  quoted: "#6B46C1",
-  won: "#2F855A",
-  lost: "#C53030",
-};
+import { getLeads, statusColors } from "./lead";
 
 export default async function LeadsPage() {
   const leads = await getLeads();
@@ -89,13 +54,14 @@ export default async function LeadsPage() {
               <th style={{ padding: 14 }}>Sản phẩm</th>
               <th style={{ padding: 14 }}>Số lượng</th>
               <th style={{ padding: 14 }}>Trạng thái</th>
+              <th style={{ padding: 14 }}></th>
             </tr>
           </thead>
 
           <tbody>
             {leads.length === 0 && (
               <tr>
-                <td colSpan={9} style={{ padding: 24, textAlign: "center" }}>
+                <td colSpan={10} style={{ padding: 24, textAlign: "center" }}>
                   Chưa có lead nào.
                 </td>
               </tr>
@@ -125,6 +91,14 @@ export default async function LeadsPage() {
                     }}
                   />
                   <LeadStatusSelect id={lead.id} status={lead.status} />
+                </td>
+                <td style={{ padding: 14 }}>
+                  <Link
+                    href={`/admin/leads/${lead.id}`}
+                    style={{ color: "#6B46C1", textDecoration: "none" }}
+                  >
+                    Chi tiết →
+                  </Link>
                 </td>
               </tr>
             ))}
