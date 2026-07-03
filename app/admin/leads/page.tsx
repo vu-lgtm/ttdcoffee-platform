@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { supabaseServer } from "../../lib/supabase-server";
+import { LogoutButton } from "../LogoutButton";
 import { LeadStatusSelect } from "./LeadStatusSelect";
 
 type Lead = {
@@ -48,12 +49,21 @@ export default async function LeadsPage() {
         minHeight: "100vh",
       }}
     >
-      <Link
-        href="/admin"
-        style={{ color: "#6B46C1", textDecoration: "none" }}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "flex-start",
+        }}
       >
-        ← Dashboard
-      </Link>
+        <Link
+          href="/admin"
+          style={{ color: "#6B46C1", textDecoration: "none" }}
+        >
+          ← Dashboard
+        </Link>
+        <LogoutButton />
+      </div>
 
       <h1 style={{ fontSize: 42, marginTop: 15 }}>☕ Leads</h1>
 

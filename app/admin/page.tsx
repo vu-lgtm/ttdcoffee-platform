@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { supabaseServer } from "../lib/supabase-server";
+import { LogoutButton } from "./LogoutButton";
 
 async function getLeadsCount() {
   const { count } = await supabaseServer
@@ -47,7 +48,16 @@ export default async function AdminDashboard() {
         minHeight: "100vh",
       }}
     >
-      <h1 style={{ fontSize: 42 }}>☕ TTD Coffee CRM</h1>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "flex-start",
+        }}
+      >
+        <h1 style={{ fontSize: 42 }}>☕ TTD Coffee CRM</h1>
+        <LogoutButton />
+      </div>
 
       <p style={{ marginBottom: 40 }}>Internal Management Dashboard</p>
 
