@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { Button } from "./components/ui/button";
 
 export function LogoutButton() {
   const router = useRouter();
@@ -12,19 +13,8 @@ export function LogoutButton() {
   }
 
   return (
-    <button
-      onClick={onClick}
-      style={{
-        border: "none",
-        background: "transparent",
-        color: "#C53030",
-        cursor: "pointer",
-        textDecoration: "underline",
-        fontSize: 14,
-        padding: 0,
-      }}
-    >
+    <Button variant="ghost" size="sm" onClick={onClick} className="text-red-600 hover:bg-red-50">
       Đăng xuất
-    </button>
+    </Button>
   );
 }
