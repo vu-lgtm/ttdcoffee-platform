@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { LogoutButton } from "../../LogoutButton";
+import { getQuotesByCustomerId, statusColors } from "../../quotes/quote";
 import { getCustomerById } from "../customer";
 
 const fields: {
@@ -24,6 +25,8 @@ export default async function CustomerDetailPage({
   if (!customer) {
     notFound();
   }
+
+  const quotes = await getQuotesByCustomerId(customer.id);
 
   return (
     <main
@@ -99,6 +102,77 @@ export default async function CustomerDetailPage({
           </div>
           <div style={{ whiteSpace: "pre-wrap" }}>{customer.notes || "—"}</div>
         </div>
+      </div>
+
+      <div
+        style={{
+          background: "white",
+          borderRadius: 18,
+          boxShadow: "0 5px 18px rgba(0,0,0,.08)",
+          padding: 34,
+          maxWidth: 640,
+          marginTop: 24,
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginBottom: 16,
+          }}
+        >
+          <h2 style={{ margin: 0, fontSize: 20 }}>Báo giá</h2>
+          <Link
+            href={`/admin/quotes/new?customer_id=${customer.id}`}
+            style={{
+              border: "none",
+              borderRadius: 999,
+              background: "#B7791F",
+              color: "white",
+              padding: "10px 18px",
+              fontWeight: 600,
+              textDecoration: "none",
+            }}
+          >
+            + Tạo báo giá
+          </Link>
+        </div>
+
+        {quotes.length === 0 && (
+          <p style={{ color: "#999" }}>Chưa có báo giá nào.</p>
+        )}
+
+        {quotes.map((quote) => (
+          <Link
+            key={quote.id}
+            href={`/admin/quotes/${quote.id}`}
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              padding: "12px 0",
+              borderTop: "1px solid #eee",
+              color: "#222",
+              textDecoration: "none",
+            }}
+          >
+            <span>
+              <span
+                style={{
+                  display: "inline-block",
+                  width: 8,
+                  height: 8,
+                  borderRadius: 999,
+                  background: statusColors[quote.status] ?? "#999",
+                  marginRight: 8,
+                }}
+              />
+              {quote.product} — {quote.unit_price.toLocaleString("en-US")}{" "}
+              {quote.currency}
+            </span>
+            <span style={{ color: "#6B46C1" }}>Chi tiết →</span>
+          </Link>
+        ))}
       </div>
     </main>
   );

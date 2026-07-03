@@ -18,10 +18,19 @@ async function getCustomersCount() {
   return count ?? 0;
 }
 
+async function getQuotesCount() {
+  const { count } = await supabaseServer
+    .from("quotes")
+    .select("*", { count: "exact", head: true });
+
+  return count ?? 0;
+}
+
 export default async function AdminDashboard() {
-  const [leadsCount, customersCount] = await Promise.all([
+  const [leadsCount, customersCount, quotesCount] = await Promise.all([
     getLeadsCount(),
     getCustomersCount(),
+    getQuotesCount(),
   ]);
 
   const cards = [
@@ -33,7 +42,7 @@ export default async function AdminDashboard() {
     },
     {
       title: "Quotes",
-      value: "--",
+      value: String(quotesCount),
       link: "/admin/quotes",
       color: "#B7791F",
     },
